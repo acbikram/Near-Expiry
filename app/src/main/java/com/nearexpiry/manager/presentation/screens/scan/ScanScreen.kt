@@ -142,7 +142,7 @@ fun ScanScreen(
                 FloatingActionButton(
                     onClick = { viewModel.restartScanner() },
                     containerColor = GreenAccent,
-                    contentColor = Color(0xFF2F4F4F)
+                    contentColor = Color(0xFF002200)
                 ) {
                     Icon(Icons.Filled.PhotoCamera, contentDescription = "Scan")
                 }
