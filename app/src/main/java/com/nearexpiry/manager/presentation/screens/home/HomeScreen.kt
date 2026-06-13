@@ -241,7 +241,7 @@ fun HomeScreen(
 @Composable
 fun ClickableStatCard(
     label: String,
-    value: Int,
+    value: Number,
     accentColor: Color = CyanAccent,
     onClick: () -> Unit
 ) {
@@ -257,8 +257,13 @@ fun ClickableStatCard(
             modifier = Modifier.padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val displayValue = if (value is Double) {
+                if (value % 1.0 == 0.0) value.toInt().toString() else value.toString()
+            } else {
+                value.toString()
+            }
             Text(
-                text = value.toString(),
+                text = displayValue,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     color = accentColor,
                     fontWeight = FontWeight.ExtraBold
@@ -297,7 +302,7 @@ fun RecentItemCard(item: com.nearexpiry.manager.domain.model.ExpiryItem, onClick
                     style = MaterialTheme.typography.bodyMedium.copy(color = GreenAccent)
                 )
                 Text(
-                    text = "Qty: ${item.quantity}",
+                    text = "Qty: ${if (item.quantity % 1.0 == 0.0) item.quantity.toInt().toString() else item.quantity.toString()}",
                     style = MaterialTheme.typography.bodyMedium.copy(color = OrangeAccent)
                 )
             }

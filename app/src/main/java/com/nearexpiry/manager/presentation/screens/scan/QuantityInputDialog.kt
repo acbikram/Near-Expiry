@@ -1,6 +1,7 @@
 package com.nearexpiry.manager.presentation.screens.scan
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -8,12 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun QuantityInputDialog(
-    onQuantityConfirmed: (Int) -> Unit,
+    onQuantityConfirmed: (Double) -> Unit,
     onDismiss: () -> Unit
 ) {
     // Start empty so the field shows just a blinking cursor, matching the
@@ -30,6 +32,15 @@ fun QuantityInputDialog(
         keyboardController?.show()
     }
 
+    val handleConfirm = {
+        val qty = quantityText.toDoubleOrNull()
+        if (qty != null && qty > 0 && qty <= 99999) {
+            onQuantityConfirmed(qty)
+        } else {
+            error = "Quantity must be between 0.01 and 99999"
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Enter Quantity") },
@@ -38,10 +49,19 @@ fun QuantityInputDialog(
                 OutlinedTextField(
                     value = quantityText,
                     onValueChange = {
-                        quantityText = it.filter { char -> char.isDigit() }
-                        error = null
+                        // Allow digits and at most one decimal point
+                        if (it.count { char -> char == '.' } <= 1 && it.all { char -> char.isDigit() || char == '.' }) {
+                            quantityText = it
+                            error = null
+                        }
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { handleConfirm() }
+                    ),
                     label = { Text("Quantity") },
                     isError = error != null,
                     supportingText = { error?.let { Text(it) } },
@@ -53,14 +73,7 @@ fun QuantityInputDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = {
-                    val qty = quantityText.toIntOrNull()
-                    if (qty != null && qty in 1..99999) {
-                        onQuantityConfirmed(qty)
-                    } else {
-                        error = "Quantity must be between 1 and 99999"
-                    }
-                }
+                onClick = handleConfirm
             ) {
                 Text("Save")
             }

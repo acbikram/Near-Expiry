@@ -9,11 +9,15 @@ import androidx.compose.ui.text.withStyle
 
 @Composable
 fun DuplicateItemDialog(
-    existingQty: Int,
-    newQty: Int,
+    existingQty: Double,
+    newQty: Double,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    val formatQty: (Double) -> String = { qty ->
+        if (qty % 1.0 == 0.0) qty.toInt().toString() else qty.toString()
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Same Item Found") },
@@ -21,11 +25,11 @@ fun DuplicateItemDialog(
             Text(
                 buildAnnotatedString {
                     append("Previous Qty: ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("$existingQty\n") }
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("${formatQty(existingQty)}\n") }
                     append("New Qty: ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("$newQty\n") }
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("${formatQty(newQty)}\n") }
                     append("Final Qty: ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("${existingQty + newQty}\n") }
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("${formatQty(existingQty + newQty)}\n") }
                     append("Confirm Save?")
                 }
             )

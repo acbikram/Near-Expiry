@@ -16,7 +16,7 @@ data class ExpiryItemEntity(
     val id: Long = 0,
     val barcode: String,
     val expiryDate: String,
-    val quantity: Int,
+    val quantity: Double,
     val createdAt: Long,
     val updatedAt: Long
 )

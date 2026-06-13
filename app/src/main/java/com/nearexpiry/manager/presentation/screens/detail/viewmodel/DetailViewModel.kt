@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val MIN_QUANTITY = 1
-private const val MAX_QUANTITY = 99_999
+private const val MIN_QUANTITY = 0.01
+private const val MAX_QUANTITY = 99_999.0
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
@@ -46,7 +46,7 @@ class DetailViewModel @Inject constructor(
                     it.copy(
                         item = item,
                         expiryDate = item?.expiryDate ?: "",
-                        quantityText = (item?.quantity ?: 0).toString(),
+                        quantityText = (item?.quantity ?: 0.0).let { if (it % 1.0 == 0.0) it.toInt().toString() else it.toString() },
                         quantityError = null,
                         isLoading = false
                     )
@@ -69,20 +69,23 @@ class DetailViewModel @Inject constructor(
      * is non-null.
      */
     fun updateQuantity(rawText: String) {
-        val digitsOnly = rawText.filter { it.isDigit() }
-        val parsed = digitsOnly.toIntOrNull()
+        // Allow digits and at most one decimal point
+        if (rawText.count { char -> char == '.' } > 1 || !rawText.all { char -> char.isDigit() || char == '.' }) {
+            return
+        }
+        val parsed = rawText.toDoubleOrNull()
         val error = when {
-            digitsOnly.isEmpty() -> "Quantity is required"
+            rawText.isEmpty() -> "Quantity is required"
             parsed == null || parsed < MIN_QUANTITY || parsed > MAX_QUANTITY ->
                 "Quantity must be between $MIN_QUANTITY and $MAX_QUANTITY"
             else -> null
         }
-        _uiState.update { it.copy(quantityText = digitsOnly, quantityError = error) }
+        _uiState.update { it.copy(quantityText = rawText, quantityError = error) }
     }
 
     fun saveChanges() {
         val current = _uiState.value
-        val quantity = current.quantityText.toIntOrNull()
+        val quantity = current.quantityText.toDoubleOrNull()
         if (current.quantityError != null || quantity == null) {
             _uiState.update {
                 it.copy(

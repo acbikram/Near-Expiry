@@ -18,7 +18,7 @@ object CsvExporter {
                     arrayOf(
                         item.barcode,
                         item.expiryDate,
-                        item.quantity.toString(),
+                        if (item.quantity % 1.0 == 0.0) item.quantity.toInt().toString() else item.quantity.toString(),
                         formatTimestamp(item.createdAt),
                         formatTimestamp(item.updatedAt)
                     )

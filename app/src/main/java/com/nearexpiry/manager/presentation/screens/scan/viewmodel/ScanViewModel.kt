@@ -45,15 +45,15 @@ class ScanViewModel @Inject constructor(
         val showDuplicateDialog: Boolean = false,
         val pendingBarcode: String = "",
         val pendingExpiryDate: String = "",
-        val duplicateExistingQty: Int = 0,
-        val duplicateNewQty: Int = 0,
+        val duplicateExistingQty: Double = 0.0,
+        val duplicateNewQty: Double = 0.0,
         val duplicateItemId: Long = 0,
         // Edit dialog state
         val showEditDialog: Boolean = false,
         val editItemId: Long = 0,
         val editBarcode: String = "",
         val editExpiryDate: String = "",
-        val editQuantity: Int = 1,
+        val editQuantity: Double = 1.0,
         // Delete confirm dialog state
         val showDeleteConfirmDialog: Boolean = false,
         val deleteItemId: Long = 0
@@ -168,7 +168,7 @@ class ScanViewModel @Inject constructor(
         startInactivityTimer()
     }
 
-    fun onQuantityConfirmed(quantity: Int) {
+    fun onQuantityConfirmed(quantity: Double) {
         viewModelScope.launch {
             val currentState = _uiState.value
             val barcode = currentState.pendingBarcode
@@ -203,7 +203,8 @@ class ScanViewModel @Inject constructor(
                         showQuantityDialog = false,
                         pendingBarcode     = "",
                         pendingExpiryDate  = "",
-                        detectedBarcode    = ""
+                        detectedBarcode    = "",
+                        scannerInactive    = false  // Start scanning instantly
                     )
                 }
                 startInactivityTimer()
@@ -227,7 +228,8 @@ class ScanViewModel @Inject constructor(
                     showDuplicateDialog = false,
                     pendingBarcode      = "",
                     pendingExpiryDate   = "",
-                    detectedBarcode     = ""
+                    detectedBarcode     = "",
+                    scannerInactive     = false  // Start scanning instantly
                 )
             }
             startInactivityTimer()
@@ -252,7 +254,7 @@ class ScanViewModel @Inject constructor(
         _uiState.update { it.copy(editExpiryDate = date) }
     }
 
-    fun updateEditQuantity(qty: Int) {
+    fun updateEditQuantity(qty: Double) {
         _uiState.update { it.copy(editQuantity = qty) }
     }
 

@@ -62,7 +62,7 @@ fun DetailScreen(
                         onValueChange = viewModel::updateQuantity,
                         label = { Text("Quantity") },
                         modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         isError = uiState.quantityError != null,
                         supportingText = {
                             uiState.quantityError?.let { Text(it) }

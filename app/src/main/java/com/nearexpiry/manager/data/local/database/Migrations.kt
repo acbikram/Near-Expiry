@@ -33,4 +33,45 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
 }
 
 /** All migrations the database currently supports, in order. */
-val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2)
+/**
+ * v2 -> v3: changes quantity column type from INTEGER to REAL (Double).
+ *
+ * SQLite doesn't support ALTER COLUMN, so we must follow the standard 
+ * "new table -> copy -> swap" pattern.
+ */
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // 1. Create the new table with the correct schema
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS `expiry_items_new` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                `barcode` TEXT NOT NULL, 
+                `expiryDate` TEXT NOT NULL, 
+                `quantity` REAL NOT NULL, 
+                `createdAt` INTEGER NOT NULL, 
+                `updatedAt` INTEGER NOT NULL
+            )
+        """.trimIndent())
+
+        // 2. Copy the data from the old table to the new table
+        db.execSQL("""
+            INSERT INTO `expiry_items_new` (`id`, `barcode`, `expiryDate`, `quantity`, `createdAt`, `updatedAt`)
+            SELECT `id`, `barcode`, `expiryDate`, CAST(`quantity` AS REAL), `createdAt`, `updatedAt` FROM `expiry_items`
+        """.trimIndent())
+
+        // 3. Remove the old table
+        db.execSQL("DROP TABLE `expiry_items`")
+
+        // 4. Rename the new table to the original name
+        db.execSQL("ALTER TABLE `expiry_items_new` RENAME TO `expiry_items`")
+
+        // 5. Re-create the index that was dropped with the old table
+        db.execSQL(
+            "CREATE INDEX IF NOT EXISTS `index_expiry_items_barcode_expiryDate` " +
+                "ON `expiry_items` (`barcode`, `expiryDate`)"
+        )
+    }
+}
+
+/** All migrations the database currently supports, in order. */
+val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)

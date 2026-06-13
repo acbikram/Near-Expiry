@@ -168,7 +168,7 @@ fun HistoryItemCard(item: com.nearexpiry.manager.domain.model.ExpiryItem, onClic
                     style = MaterialTheme.typography.bodyMedium.copy(color = GreenAccent)
                 )
                 Text(
-                    text = "Qty: ${item.quantity}",
+                    text = "Qty: ${if (item.quantity % 1.0 == 0.0) item.quantity.toInt().toString() else item.quantity.toString()}",
                     style = MaterialTheme.typography.bodyMedium.copy(color = OrangeAccent)
                 )
             }

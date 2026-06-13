@@ -360,13 +360,13 @@ private fun RecentScanCard(
 private fun EditScanItemDialog(
     barcode: String,
     expiryDate: String,
-    quantity: Int,
+    quantity: Double,
     onExpiryDateChange: (String) -> Unit,
-    onQuantityChange: (Int) -> Unit,
+    onQuantityChange: (Double) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    var qtyText by remember(quantity) { mutableStateOf(quantity.toString()) }
+    var qtyText by remember(quantity) { mutableStateOf(if (quantity % 1.0 == 0.0) quantity.toInt().toString() else quantity.toString()) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -392,12 +392,14 @@ private fun EditScanItemDialog(
                 OutlinedTextField(
                     value = qtyText,
                     onValueChange = { v ->
-                        qtyText = v.filter { it.isDigit() }
-                        qtyText.toIntOrNull()?.let { onQuantityChange(it) }
+                        if (v.count { char -> char == '.' } <= 1 && v.all { char -> char.isDigit() || char == '.' }) {
+                            qtyText = v
+                            qtyText.toDoubleOrNull()?.let { onQuantityChange(it) }
+                        }
                     },
                     label = { Text("Quantity") },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true
                 )
             }

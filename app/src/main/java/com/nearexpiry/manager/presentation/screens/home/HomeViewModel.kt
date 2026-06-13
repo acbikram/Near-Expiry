@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
     data class HomeUiState(
         val totalRecords: Int = 0,
         val uniqueProducts: Int = 0,
-        val totalQuantity: Int = 0,
+        val totalQuantity: Double = 0.0,
         val expiringIn7Days: Int = 0,
         val expiringIn30Days: Int = 0,
         val recentItems: List<ExpiryItem> = emptyList(),
