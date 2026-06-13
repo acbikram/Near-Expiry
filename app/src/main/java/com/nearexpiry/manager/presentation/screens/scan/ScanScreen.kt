@@ -126,9 +126,27 @@ fun ScanScreen(
         }
     }
 
+    val showScanFab = scannerInactive && 
+        !uiState.showExpiryDialog && 
+        !uiState.showQuantityDialog && 
+        !uiState.showDuplicateDialog && 
+        !uiState.showEditDialog && 
+        !uiState.showDeleteConfirmDialog
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = { BottomNavigationBar(navController) },
+        floatingActionButton = {
+            if (showScanFab) {
+                FloatingActionButton(
+                    onClick = { viewModel.restartScanner() },
+                    containerColor = GreenAccent,
+                    contentColor = Color(0xFF003300)
+                ) {
+                    Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan")
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier

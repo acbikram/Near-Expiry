@@ -55,15 +55,7 @@ fun HomeScreen(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { BottomNavigationBar(navController) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate(Screen.Scan.route) },
-                containerColor = GreenAccent,
-                contentColor = Color(0xFF003300)
-            ) {
-                Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan")
-            }
-        },
+
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         // ── Fixed (non-scrolling) header + dashboard, then a scrollable
