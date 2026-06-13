@@ -144,7 +144,7 @@ fun ScanScreen(
                     containerColor = GreenAccent,
                     contentColor = Color(0xFF003300)
                 ) {
-                    Icon(Icons.Filled.PhotoCamera, contentDescription = "Scan")
+                    Icon(Icons.Default.Qrcode, contentDescription = "Scan")
                 }
             }
         }
