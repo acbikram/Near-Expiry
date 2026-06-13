@@ -9,6 +9,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -143,7 +144,7 @@ fun ScanScreen(
                     containerColor = GreenAccent,
                     contentColor = Color(0xFF003300)
                 ) {
-                    Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan")
+                    Icon(Icons.Filled.PhotoCamera, contentDescription = "Scan")
                 }
             }
         }
